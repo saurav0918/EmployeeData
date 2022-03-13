@@ -1,18 +1,36 @@
-import logo from "./logo.svg";
 import "./App.css";
-import { Routes, Redirect, Route } from "react-router-dom";
+import { Routes, Route, Switch, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import Search from "./components/Search";
 import EmpData from "./components/EmpData";
+import { useState } from "react";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   return (
     <div className="App">
       <Routes>
-        {/* <Route exact path="/" render={() => <Redirect to="/login" />}></Route> */}
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/search" element={<Search />}></Route>
-        <Route path="/empdata" element={<EmpData />}></Route>
+        <Route
+          exact
+          path="/"
+          element={<Navigate replace to="/login" />}
+        ></Route>
+        <Route
+          path="/login"
+          element={<Login setIsAuthenticated={setIsAuthenticated} />}
+        ></Route>
+        <Route
+          path="/search"
+          element={
+            isAuthenticated ? <Search /> : <Navigate replace to="/login" />
+          }
+        ></Route>
+        <Route
+          path="/empdata/:id"
+          element={
+            isAuthenticated ? <EmpData /> : <Navigate replace to="/login" />
+          }
+        ></Route>
       </Routes>
     </div>
   );
