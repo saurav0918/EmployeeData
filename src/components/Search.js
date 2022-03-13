@@ -7,11 +7,13 @@ function Search() {
   const [error, setError] = useState("");
   const [attr, setAttr] = useState("name");
   const [order, setOrder] = useState(true);
+  const [usersData, setUsersData] = useState([]);
 
   useEffect(() => {
     axios
       .get("https://retoolapi.dev/uBhyXL/data")
       .then((res) => {
+        setUsersData(res.data);
         setUserList(sortUserList(attr, order, res.data));
       })
       .catch((error) => {
@@ -20,7 +22,7 @@ function Search() {
       });
   }, [attr]);
 
-  let sortUserList = (att, order, list) => {
+  const sortUserList = (att, order, list) => {
     if (order) {
       list.sort((a, b) => {
         if (a[att] < b[att]) {
@@ -45,28 +47,27 @@ function Search() {
     return list;
   };
 
-  const findData = (value) => {
-    console.log(value);
-    axios
-      .get(`https://retoolapi.dev/uBhyXL/data?name=${value}`)
-      .then((res) => {
-        console.log(res);
-        setUserList(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        setError(error);
-      });
+  const filterUserList = (val, userList = usersData) => {
+    let myList = [];
+    userList.forEach((user) => {
+      val = val.toLowerCase();
+      const name = user.name.toLowerCase();
+      const profession = user.profession.toLowerCase();
+      if (name.includes(val) || profession.includes(val)) {
+        myList.push(user);
+      }
+    });
+    setUserList(myList);
   };
 
-  function handleClick(val) {
+  const handleClick = (val) => {
     setOrder(val);
     setUserList(sortUserList(attr, val, userList));
-  }
+  };
 
   const reset = () => {
     setAttr("name");
-    setUserList(sortUserList(attr, true, userList));
+    setUserList(sortUserList(attr, true, usersData));
     setError("");
   };
 
@@ -78,7 +79,7 @@ function Search() {
           <input
             className="form-control"
             placeholder="Search For anything..."
-            onChange={(e) => findData(e.target.value)}
+            onChange={(e) => filterUserList(e.target.value)}
           ></input>
           <button
             onClick={() => handleClick(true)}

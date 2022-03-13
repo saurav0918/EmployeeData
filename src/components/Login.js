@@ -58,12 +58,11 @@ function Login({ setIsAuthenticated }) {
             ></input>
           </div>
           <br></br>
-          <button
-            type="submit"
-            className="btn btn-primary inline-block active-btn"
-          >
-            Submit
-          </button>
+          <div className="form-group text-center">
+            <button type="submit" className="btn btn-primary active-btn">
+              Submit
+            </button>
+          </div>
         </form>
       </div>
     </>
